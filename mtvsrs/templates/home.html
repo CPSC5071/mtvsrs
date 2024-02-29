@@ -2,12 +2,15 @@
 {% block content %}
     <h2 class="mt-5 mb-3">New Releases</h2>
     <div class="scrolling-wrapper">
-        {% for movie in movies %}
+        {% for show in new_release_shows %}
             <div class="card">
                 <img class="card-img-top" src="https://via.placeholder.com/150" alt="Card image cap">
                 <div class="card-body">
-                    <h5 class="card-title">{{ movie.name }}</h5>
-                    <p class="card-text">{{ movie.description }}</p>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="card-title m-0">{{ show.Show_Name }}</h5>
+                        <span class="badge bg-secondary">{{ show.Type }}</span>
+                    </div>
+                    <p class="card-text">{{ show.Show_Description }}</p>
                 </div>
             </div>
         {% endfor %}
