@@ -3,16 +3,18 @@
     <h2 class="mt-5 mb-3">New Releases</h2>
     <div class="scrolling-wrapper">
         {% for show in new_release_shows %}
-            <div class="card">
-                <img class="card-img-top" src="https://via.placeholder.com/150" alt="Card image cap">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <h5 class="card-title m-0">{{ show.Show_Name }}</h5>
-                        <span class="badge bg-secondary">{{ show.Type }}</span>
+            <a href="{% url 'show' show.Show_ID %}" class="text-decoration-none text-dark">
+                <div class="card">
+                    <img class="card-img-top" src="https://via.placeholder.com/150" alt="Card image cap">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h5 class="card-title m-0">{{ show.Show_Name }}</h5>
+                            <span class="badge bg-secondary">{{ show.Show_Type }}</span>
+                        </div>
+                        <p class="card-text">{{ show.Show_Description }}</p>
                     </div>
-                    <p class="card-text">{{ show.Show_Description }}</p>
                 </div>
-            </div>
+            </a>
         {% endfor %}
     </div>
 

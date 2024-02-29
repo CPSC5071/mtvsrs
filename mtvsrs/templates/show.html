@@ -1,0 +1,37 @@
+{% extends "base.html" %} {% block title %} MTVSRS - {{ show.name }} {% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <!-- Card Image and Dropdown -->
+            <div class="col-md-4">
+                <img src="https://via.placeholder.com/150" alt="Card image" class="img-fluid mb-2">
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                        Add to List
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <li><a class="dropdown-item" href="#">Planned</a></li>
+                        <li><a class="dropdown-item" href="#">Watching</a></li>
+                        <li><a class="dropdown-item" href="#">Completed</a></li>
+                        <li><a class="dropdown-item" href="#">Dropped</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Info -->
+            <div class="col-md-8">
+                <h3> {{ show.name }}</h3>
+                <p> {{ show.description }}</p>
+                <p><strong>Genre:</strong> </p>
+                <div>
+                    <strong>My Score:</strong>
+                    <div class="ms-2 d-inline-block">4.0</div>
+                </div>
+                <!-- Status and Score distributions go here -->
+            </div>
+        </div>
+        <!-- Reviews go here -->
+    </div>
+{% endblock %}
