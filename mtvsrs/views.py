@@ -66,15 +66,38 @@ def show_page(request, show_id):
     show = get_object_or_404(ShowTable, pk=show_id)
 
     if show.movie_id:
-        show_type = "Movie"
         show = get_object_or_404(Movie, pk=show.movie_id)
+        show_type = "Movie"
+
     else:
-        show_type = "TV",
         show = get_object_or_404(TvSeries, pk=show.tv_series_id)
+        show_type = "TV"
+
+    status_types = ['Planned', 'Watching', 'Completed', 'Dropped']
+
+    # pass in show_id as parameter when executing query rather than string interpolation to prevent sql injection
+    status_distribution_query = """
+        SELECT
+            Status, COUNT(*) as Count
+        FROM
+            WatchlistShow
+        WHERE
+            Show_ID = %s
+        GROUP BY Status;
+    """
+
+   # if status is not in the query results, count should be 0, so init an empty dict first
+    status_distribution = {status_type: 0 for status_type in status_types}
+
+    with connection.cursor() as cursor:
+        cursor.execute(status_distribution_query, [show_id])
+        for row in cursor.fetchall():
+            status_distribution[row[0]] = row[1]
 
     context = {
         'show': show,
-        'show_type': show_type
+        'show_type': show_type,
+        'status_distribution': status_distribution
     }
 
     return render(request, "show.html", context)

@@ -1,12 +1,12 @@
 {% extends "base.html" %} {% block title %} MTVSRS - {{ show.name }} {% endblock %}
 
 {% block content %}
-    <div class="container">
+    <div class="container mt-3">
         <div class="row">
             <!-- Card Image and Dropdown -->
-            <div class="col-md-4">
+            <div class="col-md-4"> <!-- This will take up 4/12 of the container width -->
                 <img src="https://via.placeholder.com/150" alt="Card image" class="img-fluid mb-2">
-                <div class="dropdown">
+                <div class="dropdown mt-2">
                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
                             data-bs-toggle="dropdown" aria-expanded="false">
                         Add to List
@@ -18,20 +18,54 @@
                         <li><a class="dropdown-item" href="#">Dropped</a></li>
                     </ul>
                 </div>
+                <div class="bg-dark p-3 mt-3">
+                    <p><strong>Format:</strong> {{ show_type }}</p>
+                    {% if show_type == "TV" %}
+                        <p><strong>Episodes:</strong> {{ show.number_of_episodes }}</p>
+                    {% endif %}
+                    <p><strong>Avg Score:</strong> TODO </p>
+                    <!-- Add more metadata fields here -->
+                </div>
             </div>
 
             <!-- Info -->
-            <div class="col-md-8">
-                <h3> {{ show.name }}</h3>
-                <p> {{ show.description }}</p>
-                <p><strong>Genre:</strong> </p>
+            <div class="col-md-8"> <!-- This will take up 8/12 of the container width -->
+                <h3>{{ show.name }}</h3>
+                <p>{{ show.description }}</p>
+                <p><strong>Genre:</strong> {{ show.genre }}</p>
                 <div>
                     <strong>My Score:</strong>
-                    <div class="ms-2 d-inline-block">4.0</div>
+                    <div class="ms-2 d-inline-block">{{ user_score }}</div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col">
+                        <h4>Status Distribution</h4>
+                        <div class="row bg-dark text-white p-3 rounded">
+                            <div class="col text-center">
+                                <h5 class="mb-0"><span class="badge bg-info">Planned</span></h5>
+                                <p> {{ status_distribution.Planned }}</p>
+                            </div>
+                            <div class="col text-center">
+                                <h5 class="mb-0"><span class="badge bg-primary">Watching</span></h5>
+                                <p>{{ status_distribution.Watching }} </p>
+                            </div>
+                            <div class="col text-center">
+                                <h5 class="mb-0"><span class="badge bg-success">Completed</span></h5>
+                                <p>{{ status_distribution.Completed }}</p>
+                            </div>
+                            <div class="col text-center">
+                                <h5 class="mb-0"><span class="badge bg-warning">Dropped</span></h5>
+                                <p>{{ status_distribution.Dropped }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <h4>Score Distribution</h4>
+                    </div>
                 </div>
                 <!-- Status and Score distributions go here -->
+                <!-- Reviews go here -->
             </div>
         </div>
-        <!-- Reviews go here -->
     </div>
 {% endblock %}
