@@ -7,8 +7,8 @@ from django.urls import reverse
 import ast
 from django.contrib.auth.decorators import login_required
 
-def register_user(request: HttpRequest) -> HttpResponse:
 
+def register_user(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         form = UserCreationForm(request.POST)
         if form.is_valid():
@@ -22,9 +22,10 @@ def register_user(request: HttpRequest) -> HttpResponse:
 
     return render(request, "registration/registration_form.html", context)
 
-# @login_required()
+
+@login_required(login_url="/login/")
 def home_page(request):
-    user_id = 1
+    user_id = request.user.id
 
     # Using raw queries as syntax for Django ORM is new to me
     new_release_columns = ['Show_ID', 'Show_Name', 'Show_Description', 'Show_Type']
@@ -82,7 +83,9 @@ def home_page(request):
     }
     return render(request, "home.html", context)
 
+
 # Create a pop up alert for no search result
+@login_required(login_url="/login/")
 def search_feature(request):
     if request.method == 'POST':
         search_query = request.POST.get('search_query', '')
@@ -101,13 +104,13 @@ def search_feature(request):
             show_id = show_table.show_id
             return show_page(request, show_id)
         except TvSeries.DoesNotExist:
-            context={'error_message':'No search result, please check again'}
+            context = {'error_message': 'No search result, please check again'}
     return render(request, 'post_search.html', context)
 
 
-
+@login_required(login_url="/login/")
 def show_page(request, show_id):
-    user_id = 1
+    user_id = request.user.id
 
     ### Show data ###
     show = get_object_or_404(ShowTable, pk=show_id)
@@ -156,7 +159,27 @@ def show_page(request, show_id):
 
     return render(request, "show.html", context)
 
+
+@login_required(login_url="/login/")
 def my_list_page(request):
-    user_id = 1
-    shows = ShowTable.objects.filter(watchlist__user_id=user_id).distinct()
-    print(shows)
+    user_id = request.user.id
+    watchlist_id = Watchlist.objects.get(user_id=user_id).watchlist_id
+    watchlist_show = WatchlistShow.objects.filter(watchlist_id=watchlist_id).select_related('show_id')
+
+    shows = []
+    for show in watchlist_show:
+        if show.show_id.movie_id:
+            show = get_object_or_404(Movie, pk=show.show_id.movie_id)
+            show.type = "Movie"
+        else:
+            show = get_object_or_404(TvSeries, pk=show.show_id.tv_series_id)
+            show.type = "TV"
+        show.genre = ', '.join(ast.literal_eval(show.genre))
+        shows.append(show)
+
+    context = {
+        'shows': shows,
+        'card_count': range(10),
+        'user_id': user_id
+    }
+    return render(request, "my_list.html", context)

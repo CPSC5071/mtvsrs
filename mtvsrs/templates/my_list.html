@@ -1,0 +1,6 @@
+{% extends "base.html" %} {% block title %} My List Page {% endblock %}
+{% block content %}
+    {% for show in shows %}
+        show: {{ show.name }} <br>
+    {% endfor %}
+{% endblock %}
