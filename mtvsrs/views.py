@@ -1,9 +1,9 @@
-from django.shortcuts import render, redirect
-from mtvsrs.models import Movie
+from django.shortcuts import render, redirect, get_object_or_404
+from django.db import connection
+from mtvsrs.models import Movie, TvSeries, ShowTable
 from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse
-from django.shortcuts import render, redirect
 
 def register_user(request: HttpRequest) -> HttpResponse:
 
@@ -19,11 +19,6 @@ def register_user(request: HttpRequest) -> HttpResponse:
     context = {"form": form}
 
     return render(request, "registration/registration_form.html", context)
-from django.shortcuts import render, get_object_or_404
-from django.db import connection
-from .models import ShowTable, Movie, TvSeries
-from django.contrib.auth.decorators import login_required
-
 
 # @login_required()
 def home_page(request):
@@ -82,17 +77,27 @@ def home_page(request):
     }
     return render(request, "home.html", context)
 
+# Create a pop up alert for no search result
 def search_feature(request):
-    # Check if the request is a post request.
     if request.method == 'POST':
-        # Retrieve the search query entered by the user
-        search_query = request.POST['search_query']
-        # Filter your model by the search query
-        posts = Movie.objects.filter(name__contains=search_query)
-        return render(request, 'post_search.html', {'query':search_query, 'posts':posts})
-    else:
-        return render(request, 'post_search.html',{})
+        search_query = request.POST.get('search_query', '')
 
+        try:
+            movie = Movie.objects.get(name__icontains=search_query)
+            show_table = ShowTable.objects.get(movie_id=movie.movie_id)
+            show_id = show_table.show_id
+            return show_page(request, show_id)
+        except Movie.DoesNotExist:
+            pass
+
+        try:
+            tv_series = TvSeries.objects.get(name__icontains=search_query)
+            show_table = ShowTable.objects.get(tv_series_id=tv_series.tv_series_id)
+            show_id = show_table.show_id
+            return show_page(request, show_id)
+        except TvSeries.DoesNotExist:
+            context={'error_message':'No search result, please check again'}
+    return render(request, 'post_search.html', context)
 
 
 
