@@ -3,8 +3,8 @@
 {% block content %}
     <div class="container mt-3">
         <div class="row">
-            <!-- Card Image and Dropdown -->
-            <div class="col-md-4"> <!-- This will take up 4/12 of the container width -->
+            <!-- Left Side -->
+            <div class="col-md-2"> <!-- This will take up 2/10 of the container width -->
                 <img src="https://via.placeholder.com/150" alt="Card image" class="img-fluid mb-2">
                 <div class="dropdown mt-2">
                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
@@ -19,41 +19,51 @@
                     </ul>
                 </div>
                 <div class="bg-dark p-3 mt-3">
-                    <p><strong>Format:</strong> {{ show_type }}</p>
+                    <p><strong>Format</strong></p>
+                    <p> {{ show_type }}</p>
+                    <p><strong>Release Date</strong></p>
+                    <p> {{ show.release_date }}</p>
                     {% if show_type == "TV" %}
-                        <p><strong>Episodes:</strong> {{ show.number_of_episodes }}</p>
+                        <p><strong>Episodes</strong></p>
+                        <p>{{ show.number_of_episodes }}</p>
                     {% endif %}
-                    <p><strong>Avg Score:</strong> TODO </p>
+                    <p><strong>Avg Score</strong></p>
+                    <p>TODO</p>
+                    <p><strong>Genre</strong></p>
+                    <p>{{ show.genre }}</p>
                     <!-- Add more metadata fields here -->
                 </div>
             </div>
 
-            <!-- Info -->
-            <div class="col-md-8"> <!-- This will take up 8/12 of the container width -->
+            <!-- Right Side -->
+            <div class="col-md-8"> <!-- This will take up 8/10 of the container width -->
+                <!-- Info -->
                 <h3>{{ show.name }}</h3>
                 <p>{{ show.description }}</p>
-                <p><strong>Genre:</strong> {{ show.genre }}</p>
+
                 <div>
                     <strong>My Score:</strong>
                     <div class="ms-2 d-inline-block">{{ user_score }}</div>
                 </div>
-                <div class="row mt-3">
+
+                <!-- Status and Score Distribution -->
+                <div class="row mt-5">
                     <div class="col">
                         <h4>Status Distribution</h4>
                         <div class="row bg-dark text-white p-3 rounded">
-                            <div class="col text-center">
+                            <div class="col text-center distribution">
                                 <h5 class="mb-0"><span class="badge bg-info">Planned</span></h5>
                                 <p> {{ status_distribution.Planned }}</p>
                             </div>
-                            <div class="col text-center">
+                            <div class="col text-center distribution">
                                 <h5 class="mb-0"><span class="badge bg-primary">Watching</span></h5>
                                 <p>{{ status_distribution.Watching }} </p>
                             </div>
-                            <div class="col text-center">
+                            <div class="col text-center distribution">
                                 <h5 class="mb-0"><span class="badge bg-success">Completed</span></h5>
                                 <p>{{ status_distribution.Completed }}</p>
                             </div>
-                            <div class="col text-center">
+                            <div class="col text-center distribution">
                                 <h5 class="mb-0"><span class="badge bg-warning">Dropped</span></h5>
                                 <p>{{ status_distribution.Dropped }}</p>
                             </div>
@@ -63,8 +73,43 @@
                         <h4>Score Distribution</h4>
                     </div>
                 </div>
-                <!-- Status and Score distributions go here -->
-                <!-- Reviews go here -->
+
+                <!-- Reviews -->
+                <div class="row mt-5">
+                    <h4>Reviews</h4>
+                    {% for review in reviews %}
+                        <div class="bg-dark text-white p-3 rounded"> <!-- Separate each review -->
+
+                            <div class="review-item d-flex align-items-center"> <!-- Add flexbox alignment -->
+                                <h5 class="review-name m-0">
+                                    {{ review.user_id.first_name }} {{ review.user_id.last_name }}
+                                </h5>
+                                <span class="badge bg-secondary review-rating">{{ review.rating }} / 5</span>
+                            </div>
+                            <p>{{ review.review }}</p>
+                        </div>
+                    {% empty %}
+                        <p>No reviews available.</p>
+                    {% endfor %}
+                </div>
+
+                <!-- Similar Shows -->
+                <div class="row mt-5">
+                    <h4>Similar Shows</h4>
+                    <div class="row">
+                        <div class="scrolling-wrapper">
+                            {% for i in card_count %}
+                                <div class="card-small">
+                                    <img class="card-img-top" src="https://via.placeholder.com/150"
+                                         alt="Card image cap">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Movie Title</h5>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

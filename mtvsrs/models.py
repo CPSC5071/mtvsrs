@@ -72,6 +72,17 @@ class User(models.Model):
         managed = False
         db_table = 'User'
 
+class History(models.Model):
+    show_id = models.ForeignKey('ShowTable', models.DO_NOTHING, db_column='Show_ID')  # Field name made lowercase.
+    rating = models.IntegerField(db_column='Rating', blank=True, null=True)  # Field name made lowercase.
+    review = models.CharField(db_column='Review', max_length=300, blank=True, null=True)  # Field name made lowercase.
+    user_id = models.OneToOneField('User', models.DO_NOTHING, db_column='User_ID', primary_key=True)  # Field name made lowercase. The composite primary key (User_ID, Show_ID) found, that is not supported. The first column is selected.
+    review_date = models.DateField(db_column='Review_Date', blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'History'
+        unique_together = (('user_id', 'show_id'),)
 
 class Watchlist(models.Model):
     watchlist_id = models.IntegerField(db_column='Watchlist_ID', primary_key=True)  # Field name made lowercase.
