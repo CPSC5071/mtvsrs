@@ -1,9 +1,26 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.db import connection
 from .models import ShowTable, Movie, TvSeries, History, Watchlist, WatchlistShow
+from django.contrib.auth.forms import UserCreationForm
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.urls import reverse
 import ast
 from django.contrib.auth.decorators import login_required
 
+def register_user(request: HttpRequest) -> HttpResponse:
+
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            success_url = reverse("index")
+            return HttpResponseRedirect(success_url)
+    else:
+        form = UserCreationForm()
+
+    context = {"form": form}
+
+    return render(request, "registration/registration_form.html", context)
 
 # @login_required()
 def home_page(request):
@@ -64,6 +81,29 @@ def home_page(request):
         'new_release_shows': new_release_shows
     }
     return render(request, "home.html", context)
+
+# Create a pop up alert for no search result
+def search_feature(request):
+    if request.method == 'POST':
+        search_query = request.POST.get('search_query', '')
+
+        try:
+            movie = Movie.objects.get(name__icontains=search_query)
+            show_table = ShowTable.objects.get(movie_id=movie.movie_id)
+            show_id = show_table.show_id
+            return show_page(request, show_id)
+        except Movie.DoesNotExist:
+            pass
+
+        try:
+            tv_series = TvSeries.objects.get(name__icontains=search_query)
+            show_table = ShowTable.objects.get(tv_series_id=tv_series.tv_series_id)
+            show_id = show_table.show_id
+            return show_page(request, show_id)
+        except TvSeries.DoesNotExist:
+            context={'error_message':'No search result, please check again'}
+    return render(request, 'post_search.html', context)
+
 
 
 def show_page(request, show_id):

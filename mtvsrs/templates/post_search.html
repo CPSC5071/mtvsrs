@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Results</title>
+</head>
+<body>
+
+{% if error_message %}
+<script type="text/javascript">
+    alert("{{ error_message }}");
+    window.history.back();
+</script>
+{% endif %}
+
+</body>
+</html>

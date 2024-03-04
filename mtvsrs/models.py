@@ -13,6 +13,8 @@ class Movie(models.Model):
     class Meta:
         managed = False
         db_table = 'Movie'
+    def __str__(self):
+        return self.movie_id
 
 
 class Recommendation(models.Model):
@@ -50,6 +52,8 @@ class TvSeries(models.Model):
     release_date = models.DateField(db_column='Release_Date', blank=True, null=True)  # Field name made lowercase.
     number_of_episodes = models.IntegerField(db_column='Number_of_Episodes', blank=True,
                                              null=True)  # Field name made lowercase.
+    def __str__(self):
+        return self.tv_series_id
 
     class Meta:
         managed = False
