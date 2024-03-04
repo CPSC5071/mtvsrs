@@ -1,11 +1,14 @@
 from django.shortcuts import render, get_object_or_404
 from django.db import connection
-from .models import ShowTable, Movie, TvSeries
+from .models import ShowTable, Movie, TvSeries, History, Watchlist, WatchlistShow
+import ast
 from django.contrib.auth.decorators import login_required
 
 
 # @login_required()
 def home_page(request):
+    user_id = 1
+
     # Using raw queries as syntax for Django ORM is new to me
     new_release_columns = ['Show_ID', 'Show_Name', 'Show_Description', 'Show_Type']
     new_release_query = """
@@ -57,24 +60,31 @@ def home_page(request):
 
     context = {
         'card_count': range(10),
+        'user_id': user_id,
         'new_release_shows': new_release_shows
     }
     return render(request, "home.html", context)
 
 
 def show_page(request, show_id):
-    show = get_object_or_404(ShowTable, pk=show_id)
+    user_id = 1
 
+    ### Show data ###
+    show = get_object_or_404(ShowTable, pk=show_id)
     if show.movie_id:
         show = get_object_or_404(Movie, pk=show.movie_id)
         show_type = "Movie"
-
     else:
         show = get_object_or_404(TvSeries, pk=show.tv_series_id)
         show_type = "TV"
+    # parse genre string into list, then concat them with just a comma
+    show.genre = ', '.join(ast.literal_eval(show.genre))
 
+    ### Reviews ###
+    reviews = History.objects.filter(show_id=show_id).select_related('user_id').order_by('-review_date')[:5]
+
+    ### Status distribution ###
     status_types = ['Planned', 'Watching', 'Completed', 'Dropped']
-
     # pass in show_id as parameter when executing query rather than string interpolation to prevent sql injection
     status_distribution_query = """
         SELECT
@@ -85,19 +95,28 @@ def show_page(request, show_id):
             Show_ID = %s
         GROUP BY Status;
     """
-
-   # if status is not in the query results, count should be 0, so init an empty dict first
+    # if status is not in the query results, count should be 0, so init an empty dict first
     status_distribution = {status_type: 0 for status_type in status_types}
 
+    ### Execute queries ###
     with connection.cursor() as cursor:
         cursor.execute(status_distribution_query, [show_id])
         for row in cursor.fetchall():
             status_distribution[row[0]] = row[1]
 
+    ### Build context and return
     context = {
         'show': show,
         'show_type': show_type,
-        'status_distribution': status_distribution
+        'status_distribution': status_distribution,
+        'reviews': reviews,
+        'card_count': range(10),
+        'user_id': user_id
     }
 
     return render(request, "show.html", context)
+
+def my_list_page(request):
+    user_id = 1
+    shows = ShowTable.objects.filter(watchlist__user_id=user_id).distinct()
+    print(shows)
