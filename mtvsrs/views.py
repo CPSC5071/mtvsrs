@@ -75,11 +75,13 @@ def home_page(request):
             # exclude release date
             {new_release_columns[i]: value for i, value in enumerate(show[:-1])} for show in new_release_shows
         ]
+    top_rated_show = get_top_rated_movies(request)
 
     context = {
         'card_count': range(10),
         'user_id': user_id,
-        'new_release_shows': new_release_shows
+        'new_release_shows': new_release_shows,
+        'top_rated_show': top_rated_show
     }
     return render(request, "home.html", context)
 
@@ -183,3 +185,24 @@ def my_list_page(request):
         'user_id': user_id
     }
     return render(request, "my_list.html", context)
+
+def get_top_rated_movies(request):
+    top_histories = History.objects.filter(rating=5).order_by('-review_date')[:10]
+    top_rated_shows = []
+
+    for history in top_histories:
+        try:
+            show = history.show_id
+
+            if show.movie_id is not None:
+                movie = Movie.objects.get(movie_id=show.movie_id)
+                top_rated_shows.append({'name': movie.name, 'description': movie.description})
+
+            elif show.tv_series_id is not None:
+                series = TvSeries.objects.get(tv_series_id=show.tv_series_id)
+                top_rated_shows.append({'name': series.name, 'description': series.description})
+
+        except ShowTable.DoesNotExist:
+            pass
+
+    return top_rated_shows
