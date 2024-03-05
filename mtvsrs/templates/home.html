@@ -34,15 +34,15 @@
     <h2 class="mt-5 mb-3">Trending</h2>
     <div class="scrolling-wrapper">
         {% for top_show in top_rated_show %}
-                <div class="card">
-                    <img class="card-img-top" src="https://via.placeholder.com/150" alt="Card image cap">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h5 class="card-title m-0">{{ top_show.name }}</h5>
-                        </div>
-                        <p class="card-text">{{ top_show.description }}</p>
+            <div class="card">
+                <img class="card-img-top" src="https://via.placeholder.com/150" alt="Card image cap">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="card-title m-0">{{ top_show.name }}</h5>
                     </div>
+                    <p class="card-text">{{ top_show.description }}</p>
                 </div>
+            </div>
         {% endfor %}
     </div>
 
