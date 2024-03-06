@@ -51,9 +51,6 @@ class TvSeries(models.Model):
     number_of_episodes = models.IntegerField(db_column='Number_of_Episodes', blank=True,
                                              null=True)  # Field name made lowercase.
 
-    def __str__(self):
-        return self.tv_series_id, self.name
-
     class Meta:
         managed = False
         db_table = 'TV_Series'
