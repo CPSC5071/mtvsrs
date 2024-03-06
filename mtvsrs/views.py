@@ -75,13 +75,13 @@ def home_page(request):
             # exclude release date
             {new_release_columns[i]: value for i, value in enumerate(show[:-1])} for show in new_release_shows
         ]
-    top_rated_show = get_top_rated_movies(request)
+    trending_shows = get_trending_shows(request)
 
     context = {
         'card_count': range(10),
         'user_id': user_id,
         'new_release_shows': new_release_shows,
-        'top_rated_show': top_rated_show
+        'trending_shows': trending_shows
     }
     return render(request, "home.html", context)
 
@@ -186,9 +186,9 @@ def my_list_page(request):
     }
     return render(request, "my_list.html", context)
 
-def get_top_rated_movies(request):
+def get_trending_shows(request):
     top_histories = History.objects.filter(rating=5).order_by('-review_date')[:10]
-    top_rated_shows = []
+    trending_shows = []
 
     for history in top_histories:
         try:
@@ -196,13 +196,13 @@ def get_top_rated_movies(request):
 
             if show.movie_id is not None:
                 movie = Movie.objects.get(movie_id=show.movie_id)
-                top_rated_shows.append({'name': movie.name, 'description': movie.description})
+                trending_shows.append({'name': movie.name, 'description': movie.description})
 
             elif show.tv_series_id is not None:
                 series = TvSeries.objects.get(tv_series_id=show.tv_series_id)
-                top_rated_shows.append({'name': series.name, 'description': series.description})
+                trending_shows.append({'name': series.name, 'description': series.description})
 
         except ShowTable.DoesNotExist:
             pass
 
-    return top_rated_shows
+    return trending_shows
