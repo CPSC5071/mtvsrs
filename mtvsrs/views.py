@@ -80,6 +80,7 @@ def home_page(request):
             # exclude release date
             {new_release_columns[i]: value for i, value in enumerate(show[:-1])} for show in new_release_shows
         ]
+
     trending_shows = get_trending_shows(request)
 
     context = {
@@ -145,6 +146,14 @@ def show_page(request, show_id):
                        len(set(ast.literal_eval(tv_show.genre)) & show_genres_set) >= 2][:5]
     similar_shows = movies_common + tv_shows_common
     similar_shows = sorted(similar_shows, key=lambda x: x.release_date)
+    # use movie.movie_id or tv_series.tv_series_id to get the show_id
+    for similar_show in similar_shows:
+        movie_id = getattr(similar_show, 'movie_id', None)
+        tv_series_id = getattr(similar_show, 'tv_series_id', None)
+        if movie_id:
+            similar_show.show_id = ShowTable.objects.get(movie_id=movie_id).show_id
+        else:
+            similar_show.show_id = ShowTable.objects.get(tv_series_id=tv_series_id).show_id
 
     ### Reviews ###
     review_count = History.objects.filter(show_id=show_id).count()
@@ -264,19 +273,19 @@ def my_list_page(request):
 
 def get_trending_shows(request):
     top_histories = History.objects.filter(rating=5).order_by('-review_date')[:10]
-    trending_shows = []
 
+    trending_shows = []
     for history in top_histories:
         try:
             show = history.show_id
 
             if show.movie_id is not None:
                 movie = Movie.objects.get(movie_id=show.movie_id)
-                trending_shows.append({'name': movie.name, 'description': movie.description})
+                trending_shows.append({'name': movie.name, 'description': movie.description, 'show_id': show.show_id})
 
             elif show.tv_series_id is not None:
                 series = TvSeries.objects.get(tv_series_id=show.tv_series_id)
-                trending_shows.append({'name': series.name, 'description': series.description})
+                trending_shows.append({'name': series.name, 'description': series.description, 'show_id': show.show_id})
 
         except ShowTable.DoesNotExist:
             pass
