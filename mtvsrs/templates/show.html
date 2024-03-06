@@ -98,12 +98,11 @@
                     <h4>Similar Shows</h4>
                     <div class="row">
                         <div class="scrolling-wrapper">
-                            {% for i in card_count %}
+                            {% for similar_show in similar_shows %}
                                 <div class="card-small">
-                                    <img class="card-img-top" src="https://via.placeholder.com/150"
-                                         alt="Card image cap">
+                                    <img class="card-img-top" src="https://via.placeholder.com/150" alt="Card image cap">
                                     <div class="card-body">
-                                        <h5 class="card-title">Movie Title</h5>
+                                        <h5 class="card-title small-font m-0">{{ similar_show.name }}</h5>
                                     </div>
                                 </div>
                             {% endfor %}

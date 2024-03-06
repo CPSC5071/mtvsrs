@@ -122,9 +122,16 @@ def show_page(request, show_id):
     else:
         show = get_object_or_404(TvSeries, pk=show.tv_series_id)
         show_type = "TV"
-    # parse genre string into list, then concat them with just a comma
-    show.genre = ', '.join(ast.literal_eval(show.genre))
+    show_genres_set = set(ast.literal_eval(show.genre))
 
+    ### Similar movies or shows ###
+
+    movies = Movie.objects.all()
+    tv_shows = TvSeries.objects.all()
+    movies_common = [movie for movie in movies if len(set(ast.literal_eval(movie.genre)) & show_genres_set) >= 2][:5]
+    tv_shows_common = [tv_show for tv_show in tv_shows if len(set(ast.literal_eval(tv_show.genre)) & show_genres_set) >= 2][:5]
+    similar_shows = movies_common + tv_shows_common
+    similar_shows = sorted(similar_shows, key=lambda x: x.release_date)
     ### Reviews ###
     reviews = History.objects.filter(show_id=show_id).select_related('user_id').order_by('-review_date')[:5]
 
@@ -156,7 +163,8 @@ def show_page(request, show_id):
         'status_distribution': status_distribution,
         'reviews': reviews,
         'card_count': range(10),
-        'user_id': user_id
+        'user_id': user_id,
+        'similar_shows': similar_shows
     }
 
     return render(request, "show.html", context)

@@ -14,7 +14,7 @@ class Movie(models.Model):
         managed = False
         db_table = 'Movie'
     def __str__(self):
-        return self.movie_id
+        return self.movie_id, self.name
 
 
 class Recommendation(models.Model):
@@ -53,7 +53,7 @@ class TvSeries(models.Model):
     number_of_episodes = models.IntegerField(db_column='Number_of_Episodes', blank=True,
                                              null=True)  # Field name made lowercase.
     def __str__(self):
-        return self.tv_series_id
+        return self.tv_series_id, self.name
 
     class Meta:
         managed = False
