@@ -6,20 +6,20 @@ from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 import ast
 from django.contrib.auth.decorators import login_required
+from .forms import CustomUserCreationForm
 
 
 def register_user(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            success_url = reverse("index")
+            success_url = reverse("login")
             return HttpResponseRedirect(success_url)
     else:
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
 
     context = {"form": form}
-
     return render(request, "registration/registration_form.html", context)
 
 
