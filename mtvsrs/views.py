@@ -1,11 +1,18 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.db import connection
-from .models import ShowTable, Movie, TvSeries, History, Watchlist, WatchlistShow
-from django.contrib.auth.forms import UserCreationForm
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
-from django.urls import reverse
 import ast
+
+import plotly.express as px
+import numpy as np
+from datetime import date
+
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
+from django.db import connection
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404
+from django.urls import reverse
+from django.views.decorators.http import require_POST
+
+from .models import ShowTable, Movie, TvSeries, History, Watchlist, WatchlistShow
 
 
 def register_user(request: HttpRequest) -> HttpResponse:
@@ -111,6 +118,11 @@ def search_feature(request):
 @login_required(login_url="/login/")
 def show_page(request, show_id):
     user_id = request.user.id
+    watchlist_id = Watchlist.objects.get(user_id=user_id).watchlist_id
+    try:
+        current_status = WatchlistShow.objects.get(watchlist_id=watchlist_id, show_id=show_id).status
+    except WatchlistShow.DoesNotExist:
+        current_status = None
 
     ### Show data ###
     show = get_object_or_404(ShowTable, pk=show_id)
@@ -124,6 +136,7 @@ def show_page(request, show_id):
     show.genre = ', '.join(ast.literal_eval(show.genre))
 
     ### Reviews ###
+    review_count = History.objects.filter(show_id=show_id).count()
     reviews = History.objects.filter(show_id=show_id).select_related('user_id').order_by('-review_date')[:5]
 
     ### Status distribution ###
@@ -141,17 +154,69 @@ def show_page(request, show_id):
     # if status is not in the query results, count should be 0, so init an empty dict first
     status_distribution = {status_type: 0 for status_type in status_types}
 
+    ### Score distribution ###
+    score_distribution_query = """
+        SELECT rating FROM History WHERE Show_ID = %s;
+    """
+    # initialize for histogram, technically not necessary and we can use px.histogram
+    # but because our data is sparse sometimes there are no counts for a rating
+    score_distribution = {score: 0 for score in np.arange(1, 6)}
+
     ### Execute queries ###
-    with connection.cursor() as cursor:
+    with (connection.cursor() as cursor):
+        ### Status distribution ###
         cursor.execute(status_distribution_query, [show_id])
         for row in cursor.fetchall():
             status_distribution[row[0]] = row[1]
 
-    ### Build context and return
+        ### Score distribution ###
+        cursor.execute(score_distribution_query, [show_id])
+        for row in cursor.fetchall():
+            score_distribution[row[0]] += 1
+
+    ### Score distribution ###
+    ratings = list(score_distribution.keys())
+    counts = list(score_distribution.values())
+    score_distribution_plot = px.bar(
+        x=ratings,
+        y=counts,
+        color=counts,
+        color_continuous_scale=[(0, "red"), (0.5, "yellow"), (1, "green")]
+    )
+    # remove all labels and make responsive
+    score_distribution_plot.update_layout(
+        xaxis_title="",
+        yaxis_title="",
+        title="",
+        xaxis_showticklabels=True,
+        yaxis_showticklabels=False,
+        xaxis_visible=True,
+        yaxis_visible=False,
+        autosize=True,
+        margin=dict(l=10, r=10, t=10, b=10),
+        plot_bgcolor="rgba(0,0,0,0)",  # transparent background
+        coloraxis_showscale=False,  # hide the color scale bar
+        hovermode=False,
+        bargap=0.4
+    )
+    # adjust marker properties
+    score_distribution_plot.update_traces(
+        marker_line_width=0,  # borders around bars
+        marker_opacity=0.6,
+    )
+    score_distribution_plot = score_distribution_plot.to_html(full_html=False, config={'displayModeBar': False})
+
+    ### Build context and return ###
     context = {
-        'show': show,
+        'show': show,  # this will not have show_id, but movie_id or tv_series_id
+        'show_id': show_id,
         'show_type': show_type,
+        'watchlist_id': watchlist_id,
+        'current_status': current_status,
+        'status_types': status_types,
         'status_distribution': status_distribution,
+        'score_distribution_plot': score_distribution_plot,
+        'review_count': review_count,
         'reviews': reviews,
         'card_count': range(10),
         'user_id': user_id
@@ -183,3 +248,28 @@ def my_list_page(request):
         'user_id': user_id
     }
     return render(request, "my_list.html", context)
+
+
+@require_POST
+def change_status(request):
+    watchlist_id = int(request.POST.get('watchlistId'))
+    show_id = int(request.POST.get('showId'))
+    new_status = request.POST.get('newStatus')
+
+    # these 2 below are poorly error handled, but no time, though by this point they should exist
+    watchlist = Watchlist.objects.get(watchlist_id=watchlist_id)
+    show = ShowTable.objects.get(show_id=show_id)
+
+    # although watchlistshow takes in id, somehow it insists on taking in the object, maybe django's way to force integriy
+    watchlist_show, created = WatchlistShow.objects.get_or_create(
+        watchlist_id=watchlist,
+        show_id=show,
+        defaults={'status': new_status, 'added_date': date.today()}
+    )
+
+    # update the status if the object was found rather than created
+    if not created:
+        watchlist_show.status = new_status
+        watchlist_show.save(update_fields=["status"])
+
+    return HttpResponse(f'<span id="statusLabel">{new_status}</span>')
