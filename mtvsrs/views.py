@@ -152,8 +152,10 @@ def show_page(request, show_id):
         tv_series_id = getattr(similar_show, 'tv_series_id', None)
         if movie_id:
             similar_show.show_id = ShowTable.objects.get(movie_id=movie_id).show_id
+            similar_show.show_type = "Movie"
         else:
             similar_show.show_id = ShowTable.objects.get(tv_series_id=tv_series_id).show_id
+            similar_show.show_type = "TV"
 
     ### Reviews ###
     review_count = History.objects.filter(show_id=show_id).count()
@@ -281,11 +283,13 @@ def get_trending_shows(request):
 
             if show.movie_id is not None:
                 movie = Movie.objects.get(movie_id=show.movie_id)
-                trending_shows.append({'name': movie.name, 'description': movie.description, 'show_id': show.show_id})
+                trending_shows.append({'name': movie.name, 'description': movie.description, 'show_id': show.show_id,
+                                       'show_type': 'Movie'})
 
             elif show.tv_series_id is not None:
                 series = TvSeries.objects.get(tv_series_id=show.tv_series_id)
-                trending_shows.append({'name': series.name, 'description': series.description, 'show_id': show.show_id})
+                trending_shows.append({'name': series.name, 'description': series.description, 'show_id': show.show_id,
+                                       'show_type': 'TV'})
 
         except ShowTable.DoesNotExist:
             pass

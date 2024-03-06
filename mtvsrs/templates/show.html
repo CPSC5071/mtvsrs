@@ -4,7 +4,7 @@
     <div class="container mt-3">
         <div class="row">
             <!-- Left Side -->
-            <div class="col-md-2"> <!-- This will take up 2/10 of the container width -->
+            <div class="col-md-2 ps-0"> <!-- This will take up 2/12 of the container width -->
                 <img src="https://via.placeholder.com/150" alt="Card image" class="img-fluid mb-2">
                 <div class="dropdown mt-2">
                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
@@ -47,7 +47,7 @@
             </div>
 
             <!-- Right Side -->
-            <div class="col-md-8"> <!-- This will take up 8/10 of the container width -->
+            <div class="col-md-10"> <!-- This will take up 10/12 of the container width -->
                 <!-- Info -->
                 <h3>{{ show.name }}</h3>
                 <p>{{ show.description }}</p>
@@ -130,6 +130,7 @@
                                          alt="Card image cap">
                                     <div class="card-body card-body-small">
                                         <h5 class="card-title card-title-small m-0">{{ similar_show.name }}</h5>
+                                        <span class="badge bg-secondary">{{ similar_show.show_type }}</span>
                                     </div>
                                 </div>
                                 </a>

@@ -38,7 +38,6 @@
         }
 
         .card-body-small {
-            text-align: center;
             padding: 0.2rem;
         }
 
@@ -49,6 +48,12 @@
             min-height: 4.5em;
             -webkit-box-orient: vertical;
             overflow: hidden;
+        }
+
+        .card-title {
+            font-size: 17px;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .card-title-small {
@@ -82,51 +87,41 @@
     </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="{% url 'home' %}">MTVSRS</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"><span
-            class="navbar-toggler-icon"></span></button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-            <li class="nav-item active">
-                <a class="nav-link" href="{% url 'home' %}">Home</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'my_list' %}">My List</a>
-            </li>
-        </ul>
-        <form class="d-flex" role="search" method="POST" action="{% url 'search_view' %}">
-            {% csrf_token %}
-            <input
-                    class="form-control me-2"
-                    type="search"
-                    placeholder="Search"
-                    name="search_query"
-                    required aria-label="Search"
-            >
-            <button class="btn btn-outline-success" type="submit">Search</button>
-        </form>
-        <ul class="navbar-nav ms-auto">
-            {% if user.is_authenticated %}
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                       data-bs-toggle="dropdown" aria-expanded="false">
-                        {{ user.username }}
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="{% url 'logout' %}">Log Out</a></li>
-                    </ul>
+<div class="container">
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <a class="navbar-brand" href="{% url 'home' %}">MTVSRS</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"><span
+                class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'home' %}">Home</a>
                 </li>
-            {% else %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'login' %}">Sign In</a>
+                    <a class="nav-link" href="{% url 'my_list' %}">My List</a>
                 </li>
-            {% endif %}
-        </ul>
-    </div>
-</nav>
-<div class="container">{% block content %} {% endblock %}</div>
+            </ul>
+            <div class="d-flex ms-auto">
+                <form class="d-flex" role="search" method="POST" action="{% url 'search_view' %}">
+                    {% csrf_token %}
+                    <input
+                            class="form-control me-2"
+                            type="search"
+                            placeholder="Search"
+                            name="search_query"
+                            required aria-label="Search"
+                    >
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+
+            </div>
+            
+        </div>
+    </nav>
+    {% block content %} {% endblock %}
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
