@@ -1,11 +1,11 @@
 {% extends "base.html" %} {% block title %} MTVSRS - {{ show.name }} {% endblock %}
-
+{% load static %}
 {% block content %}
     <div class="container mt-4">
         <div class="row">
             <!-- Left Side -->
             <div class="col-md-2 ps-0"> <!-- This will take up 2/12 of the container width -->
-                <img src="https://via.placeholder.com/150" alt="Card image" class="img-fluid mb-2">
+                <img class="card-img-top" src="{% static 'images/'|add:show.name|add:'.png' %}" alt="{{ show.name }}">
                 <div class="dropdown mt-2">
                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
                             data-bs-toggle="dropdown" aria-expanded="false">
@@ -147,8 +147,7 @@
                             {% for similar_show in similar_shows %}
                                 <a href="{% url 'show' similar_show.show_id %}" class="text-decoration-none text-dark">
                                     <div class="card-small">
-                                        <img class="card-img-top" src="https://via.placeholder.com/150"
-                                             alt="Card image cap">
+                                        <img class="card-img-top" src="{% static 'images/'|add:"working"|add:'.png' %}">
                                         <div class="card-body card-body-small">
                                             <h5 class="card-title card-title-small m-0">{{ similar_show.name }}</h5>
                                             <span class="badge bg-secondary">{{ similar_show.show_type }}</span>
