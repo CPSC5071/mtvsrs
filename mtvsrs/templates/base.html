@@ -18,6 +18,33 @@
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
     <style>
+        body, .navbar, .card, .dropdown-menu {
+            background-color: #1e1e1e; /* Dark background */
+            color: #e0e0e0; /* Light text */
+        }
+
+
+        a, .nav-link {
+            color: #bb86fc; /* Light purple, adjust if needed */
+        }
+
+        .navbar {
+            border-bottom: 1px solid #333; /* Dark line for definition */
+        }
+
+        .card {
+            background-color: #2e2e2e;
+        !important; /* Slightly lighter than body for contrast */
+        }
+
+        .bg-dark {
+            background-color: #2e2e2e !important;
+        }
+
+        #editReviewForm {
+            width: 100%;
+        }
+
         .scrolling-wrapper {
             overflow-x: scroll;
             overflow-y: hidden;
@@ -134,24 +161,24 @@
             width: 100%;
             height: auto;
             object-fit: cover;
-}
+        }
 
     </style>
 </head>
 <body>
 <div class="container">
-    <nav class="navbar navbar-expand-lg navbar-light">
-        <a class="navbar-brand" href="{% url 'home' %}">MTVSRS</a>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand text-white" href="{% url 'home' %}">MTVSRS</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"><span
                 class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item active">
-                    <a class="nav-link" href="{% url 'home' %}">Home</a>
+                    <a class="nav-link text-white" href="{% url 'home' %}">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'my_list' %}">My List</a>
+                    <a class="nav-link text-white" href="{% url 'my_list' %}">My List</a>
                 </li>
             </ul>
             <div class="d-flex ms-auto search-bar">
@@ -173,8 +200,9 @@
                                data-bs-toggle="dropdown" aria-expanded="false">
                                 {{ user.username }}
                             </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" href="{% url 'logout' %}">Log Out</a></li>
+                            <ul class="dropdown-menu bg-dark" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item bg-dark text-white" href="{% url 'logout' %}">Log Out</a>
+                                </li>
                             </ul>
                         </li>
                     {% else %}

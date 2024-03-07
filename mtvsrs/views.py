@@ -1,18 +1,17 @@
 from ast import literal_eval
-
-import plotly.express as px
-import numpy as np
+from collections import defaultdict
 from datetime import date
 
+import numpy as np
+import plotly.express as px
 from django.contrib.auth.decorators import login_required
 from django.db import connection
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
-from .forms import CustomUserCreationForm, ReviewForm
 from django.views.decorators.http import require_POST
+from .forms import CustomUserCreationForm, ReviewForm
 from .models import ShowTable, Movie, TvSeries, History, Watchlist, WatchlistShow, User
-from collections import defaultdict
 
 
 def register_user(request: HttpRequest) -> HttpResponse:
@@ -206,7 +205,8 @@ def show_page(request, show_id):
         x=ratings,
         y=counts,
         color=counts,
-        color_continuous_scale=[(0, "red"), (0.5, "yellow"), (1, "green")]
+        color_continuous_scale=[(0, "red"), (0.5, "yellow"), (1, "green")],
+        template="plotly_dark",
     )
     # remove all labels and make responsive
     score_distribution_plot.update_layout(
