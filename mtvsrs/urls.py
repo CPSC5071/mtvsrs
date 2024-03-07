@@ -32,4 +32,6 @@ urlpatterns = [
     path('search/', views.search_feature, name='search_view'),
     path("my_list/", views.my_list_page, name='my_list'),
     path("change_status/", views.change_status, name='change_status'),
+    path("submit_review/", views.submit_review, name='submit_review'),
+
 ]

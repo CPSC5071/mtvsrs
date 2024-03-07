@@ -9,9 +9,9 @@ from django.db import connection
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, ReviewForm
 from django.views.decorators.http import require_POST
-from .models import ShowTable, Movie, TvSeries, History, Watchlist, WatchlistShow
+from .models import ShowTable, Movie, TvSeries, History, Watchlist, WatchlistShow, User
 from collections import defaultdict
 
 
@@ -231,6 +231,14 @@ def show_page(request, show_id):
     )
     score_distribution_plot = score_distribution_plot.to_html(full_html=False, config={'displayModeBar': False})
 
+    ### My Review ###
+    user_review = None
+    try:
+        user_review = History.objects.get(show_id=show_id, user_id=user_id)
+    except History.DoesNotExist:
+        pass
+    review_form = ReviewForm()  # pass in empty form for review submission
+
     ### Build context and return ###
     context = {
         'show': show,  # this will not have show_id, but movie_id or tv_series_id
@@ -245,7 +253,9 @@ def show_page(request, show_id):
         'reviews': reviews,
         'card_count': range(10),
         'user_id': user_id,
-        'similar_shows': similar_shows
+        'similar_shows': similar_shows,
+        'review_form': review_form,
+        'user_review': user_review
     }
 
     return render(request, "show.html", context)
@@ -364,3 +374,27 @@ def recommend_similar_shows(user_id):
     similar_shows = sorted(similar_shows, key=lambda x: x.release_date, reverse=True)[:10]
 
     return similar_shows
+
+
+@require_POST
+def submit_review(request):
+    review_form = ReviewForm(request.POST)
+    if review_form.is_valid():
+        review = review_form.cleaned_data['review']
+        rating = review_form.cleaned_data['rating']
+        show_id = request.POST.get('show_id')
+        History.objects.update_or_create(
+            show_id=ShowTable.objects.get(pk=show_id),
+            user_id=User.objects.get(pk=request.user.id),
+            defaults={'rating': rating,
+                      'review': review,
+                      'review_date': date.today()}
+        )
+
+        context = {
+            'user_review': {'review': review, 'rating': rating},  # Mimic the expected context structure
+            'review_form': ReviewForm(),  # Provide a new blank form for future use
+            'show_id': show_id  # Return the show ID to maintain context
+        }
+
+        return render(request, 'review_form.html', context)

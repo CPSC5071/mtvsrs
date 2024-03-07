@@ -1,0 +1,21 @@
+<div class="bg-dark text-white p-3 rounded" id="myReview">
+    <!-- Display review if it exists -->
+    {% if user_review %}
+        <p>{{ user_review.review }}</p>
+        <p>Rating: {{ user_review.rating }}</p>
+        <button id="editReviewButton" class="btn btn-primary">Edit</button>
+    {% endif %}
+
+    <!-- Form for submitting or editing a review -->
+    <!-- This form is shown for editing if a review exists and for submitting if it doesn't. -->
+    <form id="editReviewForm" style="display: {% if user_review %}none{% else %}block{% endif %};"
+          hx-post="/submit_review/"
+          hx-vals='{"show_id": "{{ show_id }}"}'
+          hx-target="#myReview"
+          hx-swap="outerHTML">
+        {% csrf_token %}
+        {{ review_form.as_p }}
+        <button type="submit" class="btn btn-primary">{% if user_review %}Update{% else %}
+            Submit{% endif %}</button>
+    </form>
+</div>
