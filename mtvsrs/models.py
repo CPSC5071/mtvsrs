@@ -103,3 +103,4 @@ class WatchlistShow(models.Model):
         managed = False
         db_table = 'WatchlistShow'
         unique_together = ('watchlist_id', 'show_id')
+
