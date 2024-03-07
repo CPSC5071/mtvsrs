@@ -343,7 +343,12 @@ def recommend_similar_shows(user_id):
 
     # Fetch all movies and TV shows, excluding those already reviewed
     movies = Movie.objects.exclude(movie_id__in=reviewed_show_ids)
+    for movie in movies:
+        movie.show_type = "Movie"
+
     tv_shows = TvSeries.objects.exclude(tv_series_id__in=reviewed_show_ids)
+    for tv_show in tv_shows:
+        tv_show.show_type = "TV"
 
     # Find movies and TV shows with at least 2 genres in common, excluding previously watched
     movies_common = [movie for movie in movies if len(set(literal_eval(movie.genre)) & show_genres_set) >= 1][:5]
