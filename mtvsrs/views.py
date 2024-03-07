@@ -12,6 +12,7 @@ from django.urls import reverse
 from .forms import CustomUserCreationForm
 from django.views.decorators.http import require_POST
 from .models import ShowTable, Movie, TvSeries, History, Watchlist, WatchlistShow
+from collections import defaultdict
 
 
 def register_user(request: HttpRequest) -> HttpResponse:
@@ -252,24 +253,26 @@ def show_page(request, show_id):
 def my_list_page(request):
     user_id = request.user.id
     watchlist_id = Watchlist.objects.get(user_id=user_id).watchlist_id
-    watchlist_show = WatchlistShow.objects.filter(watchlist_id=watchlist_id).select_related('show_id')
+    watchlist_shows = WatchlistShow.objects.filter(watchlist_id=watchlist_id).select_related('show_id')
 
-    shows = []
-    for show in watchlist_show:
-        if show.show_id.movie_id:
-            show = get_object_or_404(Movie, pk=show.show_id.movie_id)
-            show.type = "Movie"
+    shows_by_status = defaultdict(list)
+    for ws in watchlist_shows:
+        if ws.show_id.movie_id:
+            s = get_object_or_404(Movie, pk=ws.show_id.movie_id)
+            s.show_type = "Movie"
         else:
-            show = get_object_or_404(TvSeries, pk=show.show_id.tv_series_id)
-            show.type = "TV"
-        show.genre = ', '.join(ast.literal_eval(show.genre))
-        shows.append(show)
+            s = get_object_or_404(TvSeries, pk=ws.show_id.tv_series_id)
+            s.show_type = "TV"
+        s.genre = ', '.join(ast.literal_eval(s.genre))
+        s.show_id = ws.show_id_id
+        s.status = ws.status
+        shows_by_status[s.status].append(s)
 
     context = {
-        'shows': shows,
-        'card_count': range(10),
+        'shows_by_status': dict(shows_by_status),  # django wont render defaultdict
         'user_id': user_id
     }
+
     return render(request, "my_list.html", context)
 
 
@@ -303,20 +306,13 @@ def change_status(request):
     show_id = int(request.POST.get('showId'))
     new_status = request.POST.get('newStatus')
 
-    # these 2 below are poorly error handled, but no time, though by this point they should exist
-    watchlist = Watchlist.objects.get(watchlist_id=watchlist_id)
-    show = ShowTable.objects.get(show_id=show_id)
-
-    # although watchlistshow takes in id, somehow it insists on taking in the object, maybe django's way to force integriy
-    watchlist_show, created = WatchlistShow.objects.get_or_create(
-        watchlist_id=watchlist,
-        show_id=show,
-        defaults={'status': new_status, 'added_date': date.today()}
+    _, created = WatchlistShow.objects.filter(watchlist_id=watchlist_id, show_id=show_id).get_or_create(
+        defaults={'watchlist_id': Watchlist.objects.get(pk=watchlist_id), 'show_id': ShowTable.objects.get(pk=show_id),
+                  'status': new_status, 'added_date': date.today()}
     )
 
     # update the status if the object was found rather than created
     if not created:
-        watchlist_show.status = new_status
-        watchlist_show.save(update_fields=["status"])
+        WatchlistShow.objects.filter(watchlist_id=watchlist_id, show_id=show_id).update(status=new_status)
 
     return HttpResponse(f'<span id="statusLabel">{new_status}</span>')

@@ -37,6 +37,10 @@
             padding: 0 3px 0 0;
         }
 
+        .card-tiny {
+            width: 5rem;
+        }
+
         .card-body-small {
             padding: 0.2rem;
         }
@@ -84,6 +88,48 @@
         .review-rating {
             margin-left: 8px;
         }
+
+        .my-list {
+            align-content: center;
+            align-items: center;
+        }
+
+        .my-list p {
+            margin-bottom: 0;
+        }
+
+        .my-list .poster {
+            display: flex;
+            justify-content: center;
+        }
+
+        .my-list .show-type {
+            display: flex;
+            justify-content: center;
+        }
+
+        .search-bar {
+            align-items: center;
+            align-content: center;
+        }
+
+        .search-bar form {
+            height: 30px;
+        }
+
+        .search-bar button {
+            height: 30px;
+            padding: 3px 6px;
+            align-content: center;
+            font-size: 15px;
+            align-items: center;
+        }
+
+        .search-bar .form-control.me-2::placeholder {
+            text-align: left;
+            font-size: 14px;
+        }
+
     </style>
 </head>
 <body>
@@ -102,13 +148,13 @@
                     <a class="nav-link" href="{% url 'my_list' %}">My List</a>
                 </li>
             </ul>
-            <div class="d-flex ms-auto">
-                <form class="d-flex" role="search" method="POST" action="{% url 'search_view' %}">
+            <div class="d-flex ms-auto search-bar">
+                <form class="d-flex me-4" role="search" method="POST" action="{% url 'search_view' %}">
                     {% csrf_token %}
                     <input
                             class="form-control me-2"
                             type="search"
-                            placeholder="Search"
+                            placeholder="Show Title"
                             name="search_query"
                             required aria-label="Search"
                     >

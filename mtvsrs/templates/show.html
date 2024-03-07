@@ -1,7 +1,7 @@
 {% extends "base.html" %} {% block title %} MTVSRS - {{ show.name }} {% endblock %}
 
 {% block content %}
-    <div class="container mt-3">
+    <div class="container mt-4">
         <div class="row">
             <!-- Left Side -->
             <div class="col-md-2 ps-0"> <!-- This will take up 2/12 of the container width -->
@@ -29,7 +29,7 @@
                         {% endfor %}
                     </ul>
                 </div>
-                <div class="bg-dark p-3 mt-3">
+                <div class="bg-dark p-3 mt-3 rounded">
                     <p><strong>Format</strong></p>
                     <p> {{ show_type }}</p>
                     <p><strong>Release Date</strong></p>
@@ -61,7 +61,7 @@
                 <div class="row mt-5">
                     <div class="col">
                         <h4>Status Distribution</h4>
-                        <div class="col bg-dark text-white p-3 rounded">
+                        <div class="status-distribution col bg-dark text-white p-3 rounded">
                             <div class="row"> <!-- nested row otherwise the bg-dark spills over -->
                                 <div class="col text-center distribution">
                                     <h5 class="mb-0"><span class="badge bg-info">Planned</span></h5>
