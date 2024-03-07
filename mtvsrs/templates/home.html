@@ -1,6 +1,6 @@
 {% extends "base.html" %} {% block title %} Home Page {% endblock %}
 {% block content %}
-    <h2 class="mt-5 mb-3">New Releases</h2>
+    <h2 class="mt-4 mb-3">New Releases</h2>
     <div class="scrolling-wrapper">
         {% for show in new_release_shows %}
             <a href="{% url 'show' show.Show_ID %}" class="text-decoration-none text-dark">
@@ -36,11 +36,13 @@
     <h2 class="mt-5 mb-3">Trending</h2>
     <div class="scrolling-wrapper">
         {% for trending_show in trending_shows %}
+            <a href="{% url 'show' trending_show.show_id %}" class="text-decoration-none text-dark">
             <div class="card">
                 <img class="card-img-top" src="https://via.placeholder.com/150" alt="Card image cap">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <h5 class="card-title m-0">{{ trending_show.name }}</h5>
+                        <span class="badge bg-secondary">{{ trending_show.show_type }}</span>
                     </div>
                     <p class="card-text">{{ trending_show.description }}</p>
                 </div>

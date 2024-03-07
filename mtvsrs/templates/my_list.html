@@ -1,6 +1,80 @@
 {% extends "base.html" %} {% block title %} My List Page {% endblock %}
 {% block content %}
-    {% for show in shows %}
-        show: {{ show.name }} <br>
-    {% endfor %}
+    <div class="container mt-4">
+        <div class="row">
+            <!-- Left Side -->
+            <div class="col-md-2 ps-0"> <!-- This will take up 2/12 of the container width -->
+                <div class="mb-3 p-1 bg-dark text-white rounded list-group list-group-flush">
+                    <a href="#" class="list-group-item list-group-item-action active">All</a>
+                    <a href="#" class="list-group-item list-group-item-action">Planned</a>
+                    <a href="#" class="list-group-item list-group-item-action">Watching</a>
+                    <a href="#" class="list-group-item list-group-item-action">Completed</a>
+                    <a href="#" class="list-group-item list-group-item-action">Dropped</a>
+                </div>
+            </div>
+
+            <!-- Right Side -->
+            <div class="col-md-10"> <!-- This will take up 10/12 of the container width -->
+
+                {% for status, shows in shows_by_status.items %}
+                    <div class="row mb-3 {{ status }} All">
+                        <div class="col">
+                            <h3>{{ status }}</h3>
+                            <div class="col bg-dark text-white p-2 rounded">
+                                <div class="row mb-1 my-list">
+                                    <!-- columns -->
+                                    <div class="col-md-2"> <!-- empty space to align the other columns -->
+                                    </div>
+                                    <div class="col-md-8">
+                                        <h5>Show</h5>
+                                    </div>
+                                    <div class="col-md-2 show-type">
+                                        <h5>Type</h5>
+                                    </div>
+                                </div>
+                                {% for show in shows %}
+                                    <div class="row mb-3 my-list">
+                                        <!-- nested row otherwise the bg-dark spills over -->
+                                        <div class="col-md-2 poster">
+                                            <a href="{% url 'show' show.show_id %}"
+                                               class="text-decoration-none text-dark">
+                                                <div class="card-tiny">
+                                                    <img class="card-img-top" src="https://via.placeholder.com/150"
+                                                         alt="Card image cap">
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <a href="{% url 'show' show.show_id %}"
+                                               class="text-decoration-none text-dark">
+                                                <h6><strong>{{ show.name }}</strong></h6>
+                                                <p>{{ show.description }}</p>
+                                            </a>
+                                        </div>
+                                        <div class="col-md-2 show-type">
+                                            <h6><strong>{{ show.show_type }}</strong></h6>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <!-- hide and unhide elements based on filter -->
+    <script>
+        $(document).ready(function () {
+            $('.list-group-item').click(function () {
+                let filter = $(this).text().trim();
+                $('.All').hide();
+                $('.' + filter).show();
+                $('.list-group-item').removeClass('active');
+                $(this).addClass('active');
+            });
+        });
+    </script>
 {% endblock %}

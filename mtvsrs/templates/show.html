@@ -1,10 +1,10 @@
 {% extends "base.html" %} {% block title %} MTVSRS - {{ show.name }} {% endblock %}
 
 {% block content %}
-    <div class="container mt-3">
+    <div class="container mt-4">
         <div class="row">
             <!-- Left Side -->
-            <div class="col-md-2"> <!-- This will take up 2/10 of the container width -->
+            <div class="col-md-2 ps-0"> <!-- This will take up 2/12 of the container width -->
                 <img src="https://via.placeholder.com/150" alt="Card image" class="img-fluid mb-2">
                 <div class="dropdown mt-2">
                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
@@ -29,7 +29,7 @@
                         {% endfor %}
                     </ul>
                 </div>
-                <div class="bg-dark p-3 mt-3">
+                <div class="bg-dark p-3 mt-3 rounded">
                     <p><strong>Format</strong></p>
                     <p> {{ show_type }}</p>
                     <p><strong>Release Date</strong></p>
@@ -47,7 +47,7 @@
             </div>
 
             <!-- Right Side -->
-            <div class="col-md-8"> <!-- This will take up 8/10 of the container width -->
+            <div class="col-md-10"> <!-- This will take up 10/12 of the container width -->
                 <!-- Info -->
                 <h3>{{ show.name }}</h3>
                 <p>{{ show.description }}</p>
@@ -61,7 +61,7 @@
                 <div class="row mt-5">
                     <div class="col">
                         <h4>Status Distribution</h4>
-                        <div class="col bg-dark text-white p-3 rounded">
+                        <div class="status-distribution col bg-dark text-white p-3 rounded">
                             <div class="row"> <!-- nested row otherwise the bg-dark spills over -->
                                 <div class="col text-center distribution">
                                     <h5 class="mb-0"><span class="badge bg-info">Planned</span></h5>
@@ -102,7 +102,7 @@
                     <h6>{{ review_count }} total reviews</h6>
                     {% for review in reviews %}
                         <div class="bg-dark text-white p-3 rounded"> <!-- separate each review -->
-                            <div class="review-item d-flex align-items-center"> 
+                            <div class="review-item d-flex align-items-center">
                                 <h5 class="review-name m-0">
                                     {{ review.user_id.first_name }} {{ review.user_id.last_name }}
                                 </h5>
@@ -124,12 +124,16 @@
                     <div class="row">
                         <div class="scrolling-wrapper">
                             {% for similar_show in similar_shows %}
+                                <a href="{% url 'show' similar_show.show_id %}" class="text-decoration-none text-dark">
                                 <div class="card-small">
-                                    <img class="card-img-top" src="https://via.placeholder.com/150" alt="Card image cap">
-                                    <div class="card-body">
-                                        <h5 class="card-title small-font m-0">{{ similar_show.name }}</h5>
+                                    <img class="card-img-top" src="https://via.placeholder.com/150"
+                                         alt="Card image cap">
+                                    <div class="card-body card-body-small">
+                                        <h5 class="card-title card-title-small m-0">{{ similar_show.name }}</h5>
+                                        <span class="badge bg-secondary">{{ similar_show.show_type }}</span>
                                     </div>
                                 </div>
+                                </a>
                             {% endfor %}
                         </div>
                     </div>
