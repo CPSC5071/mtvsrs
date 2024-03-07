@@ -265,7 +265,7 @@ def my_list_page(request):
         else:
             s = get_object_or_404(TvSeries, pk=ws.show_id.tv_series_id)
             s.show_type = "TV"
-        s.genre = ', '.join(ast.literal_eval(s.genre))
+        s.genre = ', '.join(literal_eval(s.genre))
         s.show_id = ws.show_id_id
         s.status = ws.status
         shows_by_status[s.status].append(s)
