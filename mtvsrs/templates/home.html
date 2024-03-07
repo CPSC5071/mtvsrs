@@ -1,11 +1,12 @@
 {% extends "base.html" %} {% block title %} Home Page {% endblock %}
+{% load static %}
 {% block content %}
     <h2 class="mt-4 mb-3">New Releases</h2>
     <div class="scrolling-wrapper">
         {% for show in new_release_shows %}
             <a href="{% url 'show' show.Show_ID %}" class="text-decoration-none text-dark">
                 <div class="card">
-                    <img class="card-img-top" src="https://via.placeholder.com/150" alt="Card image cap">
+                    <img class="card-img-top" src="{% static 'images/'|add:show.Show_Name|add:'.png' %}" alt="{{ show.Show_Name }}">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <h5 class="card-title m-0">{{ show.Show_Name }}</h5>
@@ -23,7 +24,7 @@
         {% for recommend_show in recommend_shows %}
             <a href="{% url 'show' recommend_show.show_id %}" class="text-decoration-none text-dark">
                 <div class="card">
-                    <img class="card-img-top" src="https://via.placeholder.com/150" alt="Card image cap">
+                    <img class="card-img-top" src="{% static 'images/'|add:recommend_show.name|add:'.png' %}" alt="{{ recommend_show.name }}">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <h5 class="card-title m-0">{{ recommend_show.name }}</h5>
@@ -41,7 +42,7 @@
         {% for trending_show in trending_shows %}
             <a href="{% url 'show' trending_show.show_id %}" class="text-decoration-none text-dark">
                 <div class="card">
-                    <img class="card-img-top" src="https://via.placeholder.com/150" alt="Card image cap">
+                    <img class="card-img-top" src="{% static 'images/'|add:trending_show.name|add:'.png' %}" alt="{{ trending_show.name }}">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <h5 class="card-title m-0">{{ trending_show.name }}</h5>
