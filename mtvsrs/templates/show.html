@@ -125,14 +125,14 @@
                         <div class="scrolling-wrapper">
                             {% for similar_show in similar_shows %}
                                 <a href="{% url 'show' similar_show.show_id %}" class="text-decoration-none text-dark">
-                                <div class="card-small">
-                                    <img class="card-img-top" src="https://via.placeholder.com/150"
-                                         alt="Card image cap">
-                                    <div class="card-body card-body-small">
-                                        <h5 class="card-title card-title-small m-0">{{ similar_show.name }}</h5>
-                                        <span class="badge bg-secondary">{{ similar_show.show_type }}</span>
+                                    <div class="card-small">
+                                        <img class="card-img-top" src="https://via.placeholder.com/150"
+                                             alt="Card image cap">
+                                        <div class="card-body card-body-small">
+                                            <h5 class="card-title card-title-small m-0">{{ similar_show.name }}</h5>
+                                            <span class="badge bg-secondary">{{ similar_show.show_type }}</span>
+                                        </div>
                                     </div>
-                                </div>
                                 </a>
                             {% endfor %}
                         </div>

@@ -343,17 +343,21 @@ def recommend_similar_shows(user_id):
 
     # Fetch all movies and TV shows, excluding those already reviewed
     movies = Movie.objects.exclude(movie_id__in=reviewed_show_ids)
-    for movie in movies:
-        movie.show_type = "Movie"
 
     tv_shows = TvSeries.objects.exclude(tv_series_id__in=reviewed_show_ids)
-    for tv_show in tv_shows:
-        tv_show.show_type = "TV"
 
     # Find movies and TV shows with at least 2 genres in common, excluding previously watched
     movies_common = [movie for movie in movies if len(set(literal_eval(movie.genre)) & show_genres_set) >= 1][:5]
     tv_shows_common = [tv_show for tv_show in tv_shows if len(set(literal_eval(tv_show.genre)) & show_genres_set) >= 1][
                       :5]
+
+    for movie in movies_common:
+        movie.show_type = "Movie"
+        movie.show_id = ShowTable.objects.get(movie_id=movie.movie_id).show_id
+
+    for tv_show in tv_shows_common:
+        tv_show.show_type = "TV"
+        tv_show.show_id = ShowTable.objects.get(tv_series_id=tv_show.tv_series_id).show_id
 
     # Combine the lists and sort by release date
     similar_shows = movies_common + tv_shows_common

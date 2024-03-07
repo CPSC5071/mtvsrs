@@ -21,16 +21,18 @@
     <h2 class="mt-5 mb-3">Recommended for you</h2>
     <div class="scrolling-wrapper">
         {% for recommend_show in recommend_shows %}
-            <div class="card">
-                <img class="card-img-top" src="https://via.placeholder.com/150" alt="Card image cap">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <h5 class="card-title m-0">{{ recommend_show.name }}</h5>
-                        <span class="badge bg-secondary">{{ recommend_show.show_type }}</span>
+            <a href="{% url 'show' recommend_show.show_id %}" class="text-decoration-none text-dark">
+                <div class="card">
+                    <img class="card-img-top" src="https://via.placeholder.com/150" alt="Card image cap">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h5 class="card-title m-0">{{ recommend_show.name }}</h5>
+                            <span class="badge bg-secondary">{{ recommend_show.show_type }}</span>
+                        </div>
+                        <p class="card-text">{{ recommend_show.description }}</p>
                     </div>
-                    <p class="card-text">{{ recommend_show.description }}</p>
                 </div>
-            </div>
+            </a>
         {% endfor %}
     </div>
 
@@ -38,16 +40,17 @@
     <div class="scrolling-wrapper">
         {% for trending_show in trending_shows %}
             <a href="{% url 'show' trending_show.show_id %}" class="text-decoration-none text-dark">
-            <div class="card">
-                <img class="card-img-top" src="https://via.placeholder.com/150" alt="Card image cap">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <h5 class="card-title m-0">{{ trending_show.name }}</h5>
-                        <span class="badge bg-secondary">{{ trending_show.show_type }}</span>
+                <div class="card">
+                    <img class="card-img-top" src="https://via.placeholder.com/150" alt="Card image cap">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h5 class="card-title m-0">{{ trending_show.name }}</h5>
+                            <span class="badge bg-secondary">{{ trending_show.show_type }}</span>
+                        </div>
+                        <p class="card-text">{{ trending_show.description }}</p>
                     </div>
-                    <p class="card-text">{{ trending_show.description }}</p>
                 </div>
-            </div>
+            </a>
         {% endfor %}
     </div>
 
