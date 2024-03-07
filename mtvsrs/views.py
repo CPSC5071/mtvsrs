@@ -1,4 +1,3 @@
-import ast
 from ast import literal_eval
 
 import plotly.express as px
@@ -13,8 +12,6 @@ from django.urls import reverse
 from .forms import CustomUserCreationForm
 from django.views.decorators.http import require_POST
 from .models import ShowTable, Movie, TvSeries, History, Watchlist, WatchlistShow
-
-from django.db.models import Q
 
 
 def register_user(request: HttpRequest) -> HttpResponse:
@@ -138,16 +135,16 @@ def show_page(request, show_id):
         show = get_object_or_404(TvSeries, pk=show.tv_series_id)
         show_type = "TV"
     # parse genre string into list, then concat them with just a comma
-    literal_eval_genre = ast.literal_eval(show.genre)
+    literal_eval_genre = literal_eval(show.genre)
     show.genre = ', '.join(literal_eval_genre)
 
     ### Similar shows ##
     show_genres_set = set(literal_eval_genre)
     movies = Movie.objects.all()
     tv_shows = TvSeries.objects.all()
-    movies_common = [movie for movie in movies if len(set(ast.literal_eval(movie.genre)) & show_genres_set) >= 2][:5]
+    movies_common = [movie for movie in movies if len(set(literal_eval(movie.genre)) & show_genres_set) >= 2][:5]
     tv_shows_common = [tv_show for tv_show in tv_shows if
-                       len(set(ast.literal_eval(tv_show.genre)) & show_genres_set) >= 2][:5]
+                       len(set(literal_eval(tv_show.genre)) & show_genres_set) >= 2][:5]
     similar_shows = movies_common + tv_shows_common
     similar_shows = sorted(similar_shows, key=lambda x: x.release_date)
 
@@ -256,7 +253,7 @@ def my_list_page(request):
         else:
             show = get_object_or_404(TvSeries, pk=show.show_id.tv_series_id)
             show.type = "TV"
-        show.genre = ', '.join(ast.literal_eval(show.genre))
+        show.genre = ', '.join(literal_eval(show.genre))
         shows.append(show)
 
     context = {
@@ -313,6 +310,7 @@ def change_status(request):
 
     return HttpResponse(f'<span id="statusLabel">{new_status}</span>')
 
+
 def get_high_rated_show_genre(user_id):
     highest_rated = History.objects.filter(user_id=user_id).order_by('-rating').first()
 
@@ -323,17 +321,14 @@ def get_high_rated_show_genre(user_id):
             return highest_rated.show_id.tv_series.genre
 
 
-
 def recommend_similar_shows(user_id):
-
     genre_string = get_high_rated_show_genre(user_id)
 
     if not genre_string:
         return []
 
-    eval_genre = ast.literal_eval(genre_string)
+    eval_genre = literal_eval(genre_string)
     show_genres_set = set(eval_genre)
-
 
     reviewed_show_ids = History.objects.filter(user_id=user_id).values_list('show_id', flat=True)
 
@@ -343,18 +338,11 @@ def recommend_similar_shows(user_id):
 
     # Find movies and TV shows with at least 2 genres in common, excluding previously watched
     movies_common = [movie for movie in movies if len(set(literal_eval(movie.genre)) & show_genres_set) >= 1][:5]
-    tv_shows_common = [tv_show for tv_show in tv_shows if len(set(literal_eval(tv_show.genre)) & show_genres_set) >= 1][:5]
+    tv_shows_common = [tv_show for tv_show in tv_shows if len(set(literal_eval(tv_show.genre)) & show_genres_set) >= 1][
+                      :5]
 
     # Combine the lists and sort by release date
     similar_shows = movies_common + tv_shows_common
     similar_shows = sorted(similar_shows, key=lambda x: x.release_date, reverse=True)[:10]
 
     return similar_shows
-
-
-
-
-
-
-
-
