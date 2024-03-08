@@ -56,7 +56,7 @@ Start Django app as a background process
 ```
 pip install -r requirements.txt
 python3 manage.py migrate
-nohup python3 manage.py runserver &
+nohup python3 manage.py runserver --insecure &
 ```
 
 NOTE: 
@@ -75,7 +75,7 @@ After new changes have been merged to main branch, we need to SSH to our EC2 (as
 ssh -i devin.pem ec2-user@3.85.11.137 
 ```
 
-Pull the changes and restart the server
+Pull the changes and restart the server. Running insecure mode otherwise Django server won't serve static files if debug is disabled.
 
 ```
 cd mtvsrs
@@ -83,7 +83,7 @@ git pull
 source .DJANGO_SECRET_KEY
 kill $(ps aux | grep "[p]ython3 manage.py runserver" | head -n 1 | awk '{print $2}')
 python3 manage.py migrate
-nohup python3 manage.py runserver &
+nohup python3 manage.py runserver --insecure &
 ```
 
 ## Local Development 

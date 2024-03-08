@@ -40,7 +40,7 @@
                                                class="text-decoration-none text-white">
                                                 <div class="card-tiny">
                                                     <img class="card-img-top"
-                                                         src="{% static 'images/'|add:"working"|add:'.png' %}"
+                                                         src="{% static 'images/'|add:show.name|add:'.png' %}" alt="{{ show.name }}"
                                                          onerror="this.onerror=null;this.src='{% static 'images/'|add:"working"|add:'.png' %}';">
                                                 </div>
                                             </a>
