@@ -1,3 +1,9 @@
+## Description
+
+Movie and TV Series Recommendation System (MTVSRS) is an app that allows users to track movies and TV series that they've watched, and get recommendations based on their preferences.
+
+It's currently live on http://3.85.11.137 
+
 ## EC2 and NGINX Setup 
 
 Install essentials, NGINX, MariaDB (mostly to provide mysql_config which is used by mysqlclient package for Django's connector) and the official Ansible role
