@@ -1,12 +1,17 @@
 ## Description
 
-Movie and TV Series Recommendation System (MTVSRS) is an app that allows users to track movies and TV series that they've watched, and get recommendations based on their preferences.
+Movie and TV Series Recommendation System (MTVSRS) is an app that allows users to track movies and TV series that
+they've watched, and get recommendations based on their preferences ala myanimelist.
 
-It's currently live on http://3.85.11.137 
+It's currently live on http://3.85.11.137 -- You will have to register an account first as lots of the feature depend on
+user data.
 
-## EC2 and NGINX Setup 
+All assets and data are AI generated (OpenAI's GPT and Stable Diffusion), see https://github.com/CPSC5071/mockagpt
 
-Install essentials, NGINX, MariaDB (mostly to provide mysql_config which is used by mysqlclient package for Django's connector) and the official Ansible role
+## EC2 and NGINX Setup
+
+Install essentials, NGINX, MariaDB (mostly to provide mysql_config which is used by mysqlclient package for Django's
+connector) and the official Ansible role
 
 ```
 sudo yum -y install git python-pip mariadb105-devel gcc python3.9-devel
@@ -14,14 +19,14 @@ pip install ansible
 ansible-galaxy install nginxinc.nginx
 ```
 
-Clone this repo, which includes playbook.yml, then run: 
+Clone this repo, which includes playbook.yml, then run:
 
 ```
 git clone https://github.com/CPSC5071/mtvsrs.git
 ansible-playbook playbook.yml
 ```
 
-Make changes to /etc/nginx/nginx.conf to redirect to port 8000, use the file in repo. 
+Make changes to /etc/nginx/nginx.conf to redirect to port 8000, use the file in repo.
 
 (Not best practice, should modularize configs in conf.d/)
 
@@ -29,7 +34,7 @@ Make changes to /etc/nginx/nginx.conf to redirect to port 8000, use the file in 
 sudo cp nginx.conf ~/etc/nginx/nginx.conf
 ```
 
-Enable (or just start) the NGINX service 
+Enable (or just start) the NGINX service
 
 ```
 sudo systemctl enable nginx
@@ -65,15 +70,16 @@ python3 manage.py migrate
 nohup python3 manage.py runserver --insecure &
 ```
 
-NOTE: 
+NOTE:
 
-In a real prod scenario, we shouldn't be using Django's default web server, use something like Gunicorn instead (https://docs.djangoproject.com/en/3.2/ref/django-admin/#runserver)
+In a real prod scenario, we shouldn't be using Django's default web server, use something like Gunicorn
+instead (https://docs.djangoproject.com/en/3.2/ref/django-admin/#runserver)
 
 > DO NOT USE THIS SERVER IN A PRODUCTION SETTING. It has not gone through security audits or performance tests.
 > (And that’s how it’s gonna stay. We’re in the business of making Web frameworks, not Web servers, so improving this
 > server to be able to handle a production environment is outside the scope of Django.)
 
-## Pulling changes and connecting to EC2 
+## Pulling changes and connecting to EC2
 
 After new changes have been merged to main branch, we need to SSH to our EC2 (ask Devin for pem file)
 
@@ -81,7 +87,8 @@ After new changes have been merged to main branch, we need to SSH to our EC2 (as
 ssh -i devin.pem ec2-user@3.85.11.137 
 ```
 
-Pull the changes and restart the server. Running insecure mode otherwise Django server won't serve static files if debug is disabled.
+Pull the changes and restart the server. Running insecure mode otherwise Django server won't serve static files if debug
+is disabled.
 
 ```
 cd mtvsrs
@@ -92,7 +99,7 @@ python3 manage.py migrate
 nohup python3 manage.py runserver --insecure &
 ```
 
-## Local Development 
+## Local Development
 
 1. Get .DJANGO_SECRET_KEY file from Devin, then run command `source .DJANGO_SECRET_KEY`
 2. In settings.py:
@@ -105,3 +112,29 @@ pip install -r requirements.txt
 python3 manage.py migrate
 python3 manage.py runserver
 ```
+
+## Screenshots
+
+Home Page
+
+![Home Page](screenshots/home.png)
+
+My List Page
+
+![My List Page](screenshots/mylist.png)
+
+Show Page
+
+![Show Page](screenshots/show.png)
+
+Login Page
+
+![Login Page](screenshots/login.png)
+
+Registration Page
+
+![Registration Page](screenshots/register.png)
+
+Sketches
+
+![Sketches](screenshots/sketches.png)
